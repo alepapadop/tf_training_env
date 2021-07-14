@@ -1,3 +1,5 @@
+The hard way there is also an easy way at the end!
+
 1) Create a python virtual env
 
 	python3 -m venv ./tf
@@ -221,3 +223,6 @@ The simple way:
 7) Use the tf_lite_converter.py to convert the model to tf lite
 	
 	use -m to specify the nameo of the exported model
+
+
+Have fun :)
