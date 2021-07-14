@@ -46,18 +46,19 @@ def main():
     parser.add_argument(
         '-w', '--width',
         help = 'Image width',
-        type = str,
+        type = int,
         default = 300
     )
     parser.add_argument(
         '-he', '--height',
         help = 'Image height',
-        type = str,
+        type = int,
         default = 300
     )
 
     args = parser.parse_args()
-
+    
+    # resizes the images to the desired size
     ResizeImage(args.dir_path, args.width, args.height)
 
 

@@ -19,7 +19,7 @@ from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as viz_utils
 import tensorflow as tf
 
-label_map_path = os.path.join('models', 'research', 'object_detection', 'data', 'mscoco_complete_label_map.pbtxt')
+label_map_path = os.path.join('workspace', 'training_demo', 'annotations', 'label_map.pbtxt')
 category_index = ""
 detect_fn = ""
 
@@ -70,7 +70,7 @@ def LoadImages(img_dir, threshold):
         detections = {key: value[0, :num_detections].numpy()
                        for key, value in detections.items()}
         detections['num_detections'] = num_detections
-    
+
         # detection_classes should be ints.
         detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
     
@@ -84,7 +84,7 @@ def LoadImages(img_dir, threshold):
               category_index,
               use_normalized_coordinates = True,
               max_boxes_to_draw = 200,
-              min_score_thresh = threshold,
+              min_score_thresh = 0.3,
               agnostic_mode = False)
         
         plt.figure()

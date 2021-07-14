@@ -8,7 +8,7 @@ from shutil import copyfile
 
 def CopyModelTrainer():
     src_file = os.path.join('models', 'research', 'object_detection', 'model_main_tf2.py')
-    dst_file = os.path.join('models', 'research', 'model_main_tf2.py')
+    dst_file = os.path.join('workspace', 'training_demo', 'model_main_tf2.py')
 
     if os.path.exists(dst_file):
         print('Training script file: ' + dst_file + ' already exists. Remove or rename to copy from the object detection source dir')

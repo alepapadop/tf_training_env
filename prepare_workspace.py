@@ -3,6 +3,7 @@ import subprocess
 import sys
 import argparse
 from argparse import ArgumentParser
+import shutil
 
 PRE_ANNOTATED_IMAGES_PATH = 'workspace/training_demo/images'
 
@@ -85,6 +86,32 @@ def IsDirEmpty(dir_name):
     
     return is_empty 
 
+def CheckForMissingCocoXML():
+
+    img_path = os.path.join('workspace', 'training_demo', 'images')
+    error = False
+
+    f = []
+    for (dirpath, dirnames, filenames) in os.walk(img_path):
+        f.extend(filenames)
+    
+    if not f:
+        error = True
+    
+
+    for filename in f:
+        name = os.path.splitext(filename)[0]
+        xmlfile = name + '.xml'
+        
+        full_xml_path = os.path.join(img_path, xmlfile)
+
+        if not os.path.exists(full_xml_path):
+            error = True
+            print(full_xml_path + ' does not exists')
+
+    if error:
+        sys.exit('COCO based xml annotations are missing for image files')
+
 
 def PartitionImages():
     script_src = os.path.join('scripts', 'preprocessing', 'partition_dataset.py')
@@ -94,8 +121,10 @@ def PartitionImages():
     train_dir = os.path.join('workspace', 'training_demo', 'images', 'train')
     test_dir = os.path.join('workspace', 'training_demo', 'images', 'test')
 
-    print('Pleae place the resized images inside the: ' + image_dir)
+    print('Please place the resized images and the xml annotations inside the: ' + image_dir)
     input('Press ENTER to continue ...')
+
+    CheckForMissingCocoXML()
     
     if IsDirEmpty(train_dir) and IsDirEmpty(test_dir):
 
@@ -106,6 +135,29 @@ def PartitionImages():
     else:
         print('There are already images in the train and test direcories. No partition is made')
 
+
+def CopyPreProcessingScripts():
+
+    script_src = os.path.join('partition_dataset.py')
+
+    script_dst = os.path.join('scripts', 'preprocessing', 'partition_dataset.py')
+    
+    if os.path.exists(script_src):
+        shutil.move(script_src, script_dst)
+    
+    if not os.path.exists(script_dst):
+        sys.exit('partition_dataset.py file is missing')
+        
+    script_src = os.path.join('generate_tfrecord.py')
+
+    script_dst = os.path.join('scripts', 'preprocessing', 'generate_tfrecord.py')
+
+    if os.path.exists(script_src):
+        shutil.move(script_src, script_dst)
+    
+    if not os.path.exists(script_dst):
+        sys.exit('generate_tfrecord.py file is missing')
+     
 
 def CreateLabelMapAndRecordFile():
 
@@ -167,7 +219,7 @@ def main():
     parser = argparse.ArgumentParser(description = "Prepare the data for training",
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
-        '-p', '--pipeline_config_dir_name',
+        '-d', '--directory_name',
         help = 'Name of an existing directory for searching the pipeline.config file. If not set a new directory will be created and ask to add a config file.',
         type = str,
         default = ""
@@ -175,11 +227,19 @@ def main():
 
     args = parser.parse_args()
     
-    model_pipeline_dir_name = args.pipeline_config_dir_name
-
+    model_pipeline_dir_name = args.directory_name
+    
+    # creates the required workspace structure
     CreateFolderStructure()
+    # copy preprocessing scripts
+    #CopyPreProcessingScripts()
+    # check for image xmls
+    CheckForMissingCocoXML()
+    # partition the images to train and test
     PartitionImages()
+    # creates the label map and the record files for the training
     CreateLabelMapAndRecordFile()
+    # check the pipeline config 
     CheckBeforeModelTrain()
 
 

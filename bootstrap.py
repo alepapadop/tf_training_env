@@ -16,7 +16,6 @@ PB_REL = 'https://github.com/protocolbuffers/protobuf/releases'
 PB_LAST_VERSION = '/download/v3.17.0/protoc-3.17.0-linux-x86_64.zip'
 
 
-
 class CloneProgress(RemoteProgress):
     def __init__(self):
         super().__init__()
@@ -30,7 +29,10 @@ class CloneProgress(RemoteProgress):
 def CloneModelsRepo():
     work_dir = os.getcwd()
     dest_dir = os.path.join(work_dir, 'models')
-    Repo.clone_from(URL_GIT_TENSORFLOW_MODEL, dest_dir, progress = CloneProgress())
+    if not os.path.exists(dest_dir):
+        Repo.clone_from(URL_GIT_TENSORFLOW_MODEL, dest_dir, progress = CloneProgress())
+    else:
+        print(dest_dir + 'already exist. The tensorflow models git repository is not downloaded')
 
 def InstallProtoBuffer():
 
@@ -54,7 +56,11 @@ def InstallProtoBuffer():
     dst_dir = os.path.join('models', 'research', 'proto_buffers')
     if not os.path.exists(dst_dir):
         os.makedirs(dst_dir)
-    with ZipFile(dst_file, 'w') as zipObj:
+    else:
+        print(dst_dir + ' already exists. The proto_buffers are not installed')
+        return
+
+    with ZipFile(dst_file, 'r') as zipObj:
         zipObj.extractall(dst_dir)
 
     protoc_exec = os.path.join('proto_buffers', 'bin', 'protoc')
@@ -99,14 +105,18 @@ def VerifyInstallationComplete():
     path = os.path.join('models', 'research', 'object_detection', 'builders', 'model_builder_tf2_test.py')
     cmd = [sys.executable, path]
     proc = subprocess.check_call(cmd)
-    print('')
 
 def main():
-    #VerifyTensorflowInstallation()
-    #CloneModelRepo()
-    #InstallProtoBuffer()
-    #InstallObjectDetectionApi()
-    #VerifyInstallationComplete()
+    # Verify the installation of the TensorFlow library
+    VerifyTensorflowInstallation()
+    # Download the tensorflow models repo, there are scripts that we need to proceed
+    CloneModelsRepo()
+    # Downoload the proto buffers and install them
+    InstallProtoBuffer()
+    # install the tensorflow object detection api
+    InstallObjectDetectionApi()
+    # verify the installation of the object detection api
+    VerifyInstallationComplete()
 
 if __name__ == "__main__":
     main()

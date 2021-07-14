@@ -13,7 +13,7 @@ from argparse import ArgumentParser
 
 def CopyModelExporter():
     src_file = os.path.join('models', 'research', 'object_detection', 'exporter_main_v2.py')
-    dst_file = os.path.join('models', 'research', 'exporter_main_v2.py')
+    dst_file = os.path.join('workspace', 'training_demo', 'exporter_main_v2.py')
     
     if os.path.exists(dst_file):
         print('Exporter script file: ' + dst_file + ' already exists. Remove or rename to copy from the object detection source dir')
@@ -52,7 +52,7 @@ def main():
     parser = argparse.ArgumentParser(description = "Export the model",
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
-        '-p', '--model_dir_name',
+        '-d', '--model_dir_name',
         help = 'Name of an existing directory containing the trained model.',
         type = str,
         default = ""
