@@ -122,8 +122,39 @@ etc
 	
 
 ###############################################################################################################
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
 
 The simple way:
+
+1) Create a python virtual env
+
+	python3 -m venv ./tf
+
+2) Activate the virtual env
+
+	source ./tf/bin/activate  # sh, bash, or zsh
+
+3) Upgrade pip
+	
+	pip install --upgrade pip
+
+4) Install the required packages form the requirements file
+
+	pip install --no-cache-dir -r req.txt
+	
+	There will be some error, this is beacause of the order of the file installation.
+
+	For every error please read the missing / failed package name and 
+
+	install it manually by running
+
+	pip install "missing_package"
+
+	and then again 
+
+	pip install --no-cache-dir -r req.txt
 
 1) Run "bootstrap.py" to install the requires packages only one time is needed
 
@@ -137,9 +168,11 @@ The simple way:
 	
 	a new directory will be created named resized_images_width_height
 
+	e.g python resize_images.py -d original_images/ --width 300 --height 300
+
 3) Run "prepare_workspace.py" to create the required folder structure only one time is needed
 	
-	use the the -p "model_name" to create a direcotry with a specific name inside the 
+	use the the -d "model_name" to create a direcotry with a specific name inside the 
 	
 	workspace/training_demo/models/
 
@@ -159,17 +192,23 @@ The simple way:
 
 	A test runs to check the installation
 
+	e.g  python prepare_workspace.py -d my_model
+
 4) Run train_model.py to start the training
 
 	use -m the model direcotory name to selecet the correct model to train
 
 	the training data are placed inside the workspace/training_demo/models/my_model
 
+	e.g python train_model.py -m my_model
+
 5) Run export_model.py to export the model
 	
-	use -p for the model name to selcet the correct model
+	use -d for the model name to selcet the correct model
 
 	the exported model is placed in workspace/training_demo/exported_models/my_model
+
+	python export_model.py -d my_model
 
 6) Use im_detections.py to test the model
 
